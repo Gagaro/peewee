@@ -701,6 +701,14 @@ class TestModelAPIs(ModelTestCase):
         self.assertEqual(u1.id, u1_x.id)
         self.assertEqual(User.select().count(), 1)
 
+    def test_get_or_create_inside_transaction(self):
+        test_db.set_autocommit(False)
+        test_db.begin()
+        u1, created = User.get_or_create(username='u1')
+        self.assertTrue(created)
+        test_db.commit()
+        test_db.set_autocommit(True)
+
     def test_get_or_create_extended(self):
         gc1, created = GCModel.get_or_create(
             name='huey',
